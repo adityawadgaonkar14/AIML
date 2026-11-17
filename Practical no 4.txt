@@ -1,0 +1,43 @@
+# Knowledge Base
+rules = {
+    "fever": "infection",
+    "cough": "respiratory_problem",
+    "infection": "need_medical_checkup",
+    "respiratory_problem": "need_medical_checkup"
+}
+
+
+def forward_chaining(facts):
+
+    print("\nInitial Facts:", facts)
+
+    while True:
+
+        new_fact = None
+
+        for condition, conclusion in rules.items():
+
+            if condition in facts and conclusion not in facts:
+                new_fact = conclusion
+                break
+
+        if new_fact is None:
+            break
+
+        facts.add(new_fact)
+        print("New Fact Derived:", new_fact)
+
+    return facts
+
+
+facts = set()
+
+if input("Do you have fever? (yes/no): ").lower() == "yes":
+    facts.add("fever")
+
+if input("Do you have cough? (yes/no): ").lower() == "yes":
+    facts.add("cough")
+
+result = forward_chaining(facts)
+
+print("\nFinal Knowledge:", result)

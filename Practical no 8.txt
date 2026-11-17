@@ -1,0 +1,151 @@
+practical 8
+
+
+cell 1
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Load Iris dataset
+iris = load_iris()
+
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df['target'] = iris.target
+
+print("Dataset Loaded Successfully!")
+print(df.head())
+
+cell 2
+
+
+# Display dataset information
+print("Dataset Shape:", df.shape)
+
+print("\nDataset Information:")
+df.info()
+
+print("\nStatistical Summary:")
+print(df.describe())
+
+print("\nTarget Classes:")
+print(df['target'].value_counts())
+
+
+cell 3
+
+
+# Check missing values
+print("Missing Values:")
+print(df.isnull().sum())
+
+# Separate input and output
+X = df.drop('target', axis=1)
+y = df['target']
+
+# Handle missing values
+X = X.fillna(X.median())
+
+print("\nInput Data Shape:", X.shape)
+print("Output Data Shape:", y.shape)
+
+print("\nData Preprocessing Completed!")
+
+
+cell 4
+
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.2,
+    random_state=42,
+    stratify=y
+)
+
+print("Training Data:", X_train.shape)
+print("Testing Data:", X_test.shape)
+
+print("\nDataset Split Successfully!")
+
+
+cell 5
+
+
+# Create Decision Tree Classifier
+model = DecisionTreeClassifier(
+    criterion='gini',
+    random_state=42
+)
+
+# Train the model
+model.fit(X_train, y_train)
+
+print("Decision Tree Model Trained Successfully!")
+
+
+cell 6
+
+
+# Create Decision Tree Classifier
+model = DecisionTreeClassifier(
+    criterion='gini',
+    random_state=42
+)
+
+# Train the model
+model.fit(X_train, y_train)
+
+print("Decision Tree Model Trained Successfully!")
+
+
+cell 7
+
+
+# Generate predictions
+y_pred = model.predict(X_test)
+
+# Generate confusion matrix
+cm = confusion_matrix(y_test, y_pred)
+
+print("Confusion Matrix:")
+print(cm)
+
+# Display confusion matrix
+plt.figure(figsize=(6, 4))
+
+plt.imshow(cm, cmap='Blues')
+plt.title("Decision Tree Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.colorbar()
+
+for i in range(len(cm)):
+    for j in range(len(cm)):
+        plt.text(j, i, cm[i, j],
+                 ha='center', va='center')
+
+plt.xticks(range(3), iris.target_names)
+plt.yticks(range(3), iris.target_names)
+plt.show()
+
+# Visualize Decision Tree
+plt.figure(figsize=(14, 8))
+
+plot_tree(
+    model,
+    feature_names=iris.feature_names,
+    class_names=iris.target_names,
+    filled=True
+)
+
+plt.title("Decision Tree Classifier")
+plt.show()
+
+print("PR8 Completed Successfully!")

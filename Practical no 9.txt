@@ -1,0 +1,177 @@
+practical 9 
+
+cell 1
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans, AgglomerativeClustering
+
+from scipy.cluster.hierarchy import dendrogram, linkage
+
+# Load Iris dataset
+iris = load_iris()
+
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+
+print("Dataset Loaded Successfully!")
+print(df.head())
+
+cell 2
+
+
+# Display dataset information
+print("Dataset Shape:", df.shape)
+
+print("\nDataset Information:")
+df.info()
+
+print("\nStatistical Summary:")
+print(df.describe())
+
+print("\nFirst Five Records:")
+print(df.head())
+
+cell 3
+
+
+# Check missing values
+print("Missing Values:")
+print(df.isnull().sum())
+
+# Handle missing values
+df = df.fillna(df.median())
+
+# Apply feature scaling
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(df)
+
+print("\nFeature Scaling Completed!")
+print("\nScaled Data:")
+print(X_scaled[:5])
+
+
+cell 4
+
+
+# Elbow Method for Optimal Clusters
+
+import os
+os.environ["OMP_NUM_THREADS"] = "1"
+
+wcss = []
+
+for k in range(1, 11):
+    model = KMeans(
+        n_clusters=k,
+        random_state=42,
+        n_init=10
+    )
+    model.fit(X_scaled)
+    wcss.append(model.inertia_)
+
+# Plot Elbow Graph
+plt.figure(figsize=(7, 4))
+plt.plot(range(1, 11), wcss, marker='o')
+
+plt.title("Elbow Method")
+plt.xlabel("Number of Clusters (K)")
+plt.ylabel("WCSS")
+plt.grid()
+plt.show()
+
+print("Elbow Method Completed Successfully!")
+
+
+cell 5
+
+
+# Create linkage matrix
+linked = linkage(X_scaled, method='ward')
+
+# Plot dendrogram
+plt.figure(figsize=(10, 5))
+
+dendrogram(linked)
+
+plt.title("Hierarchical Clustering Dendrogram")
+plt.xlabel("Data Points")
+plt.ylabel("Euclidean Distance")
+plt.show()
+
+
+cell 6
+
+
+# K-Means Clustering
+
+import os
+os.environ["OMP_NUM_THREADS"] = "1"
+
+# Create K-Means model
+kmeans = KMeans(
+    n_clusters=3,
+    random_state=42,
+    n_init=10
+)
+
+# Fit model and predict clusters
+kmeans_labels = kmeans.fit_predict(X_scaled)
+
+# Add clusters to dataset
+df['KMeans_Cluster'] = kmeans_labels
+
+print("K-Means Clustering Completed!")
+
+print("\nCluster Assignment:")
+print(df[['KMeans_Cluster']].head(10))
+
+print("\nCluster Counts:")
+print(df['KMeans_Cluster'].value_counts())
+
+
+cell 7
+
+
+# Create Hierarchical Clustering model
+hc = AgglomerativeClustering(n_clusters=3, linkage='ward')
+
+# Fit model and predict clusters
+hc_labels = hc.fit_predict(X_scaled)
+
+# Add clusters to dataset
+df['Hierarchical_Cluster'] = hc_labels
+
+print("Hierarchical Clustering Completed!")
+
+print("\nHierarchical Cluster Counts:")
+print(df['Hierarchical_Cluster'].value_counts())
+
+# Visualize K-Means clusters
+plt.figure(figsize=(7, 4))
+plt.scatter(
+    X_scaled[:, 0], X_scaled[:, 1],
+    c=kmeans_labels, cmap='viridis'
+)
+plt.title("K-Means Clustering")
+plt.xlabel("Sepal Length (Scaled)")
+plt.ylabel("Sepal Width (Scaled)")
+plt.show()
+
+# Visualize Hierarchical clusters
+plt.figure(figsize=(7, 4))
+plt.scatter(
+    X_scaled[:, 0], X_scaled[:, 1],
+    c=hc_labels, cmap='rainbow'
+)
+plt.title("Hierarchical Clustering")
+plt.xlabel("Sepal Length (Scaled)")
+plt.ylabel("Sepal Width (Scaled)")
+plt.show()
+
+print("\nPR9 Completed Successfully!")

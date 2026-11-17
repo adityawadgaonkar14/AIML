@@ -1,0 +1,126 @@
+practical 6 
+
+cell 1
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+
+# Load dataset
+data = fetch_california_housing()
+
+df = pd.DataFrame(data.data, columns=data.feature_names)
+df['Price'] = data.target
+
+print("Dataset Loaded Successfully!")
+print(df.head())
+
+cell 2
+
+
+# Display dataset information
+print("Dataset Shape:", df.shape)
+
+print("\nDataset Information:")
+df.info()
+
+print("\nColumn Names:")
+print(df.columns)
+
+print("\nFirst Five Records:")
+print(df.head())
+
+cell 3
+
+
+# Check missing values
+print("Missing Values:")
+print(df.isnull().sum())
+
+# Fill numerical missing values with median
+for col in df.columns:
+    df[col] = df[col].fillna(df[col].median())
+
+print("\nMissing Values After Handling:")
+print(df.isnull().sum())
+
+print("\nData Preprocessing Completed!")
+
+cell 4
+
+
+# Statistical analysis
+print("Statistical Summary:")
+print(df.describe())
+
+# Histogram of house prices
+plt.figure(figsize=(7, 4))
+plt.hist(df['Price'], bins=30, edgecolor='black')
+
+plt.title("California Housing Price Distribution")
+plt.xlabel("House Price")
+plt.ylabel("Frequency")
+
+plt.show()
+
+cell 5
+
+
+# Separate input and output
+X = df.drop('Price', axis=1)
+y = df['Price']
+
+# Split dataset (80% training, 20% testing)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.2,
+    random_state=42
+)
+
+print("Training Data:", X_train.shape)
+print("Testing Data:", X_test.shape)
+
+cell 6
+
+
+# Feature scaling
+scaler = StandardScaler()
+
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Create Linear Regression model
+model = LinearRegression()
+
+# Train the model
+model.fit(X_train_scaled, y_train)
+
+print("Linear Regression Model Trained Successfully!")
+
+
+cell 7 
+
+
+# Predict house prices
+y_pred = model.predict(X_test_scaled)
+
+# Calculate evaluation metrics
+mse = mean_squared_error(y_test, y_pred)
+mae = mean_absolute_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print("Mean Squared Error (MSE):", mse)
+print("Mean Absolute Error (MAE):", mae)
+print("R2 Score:", r2)
+
+print("\nActual Prices:", list(y_test[:5]))
+print("Predicted Prices:", list(y_pred[:5]))
+
+print("\nPR6 Completed Successfully!")

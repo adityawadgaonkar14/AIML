@@ -1,0 +1,35 @@
+class SmartHomeAgent:
+
+    def __init__(self):
+        self.status = "OFF"
+
+    def perceive(self, temperature, motion):
+        self.temperature = temperature
+        self.motion = motion
+
+    def act(self):
+
+        if self.motion == "YES" and self.temperature > 30:
+            self.status = "AC ON"
+
+        elif self.motion == "YES":
+            self.status = "LIGHT ON"
+
+        else:
+            self.status = "ALL DEVICES OFF"
+
+        return self.status
+
+
+# Create Agent
+agent = SmartHomeAgent()
+
+# Input from sensors
+temperature = int(input("Enter Temperature: "))
+motion = input("Is motion detected? (YES/NO): ").upper()
+
+# Agent perception
+agent.perceive(temperature, motion)
+
+# Agent action
+print("Agent Action:", agent.act())

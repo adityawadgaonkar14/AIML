@@ -1,0 +1,136 @@
+practical 5 
+
+cell 1
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+# Load Titanic dataset
+df = sns.load_dataset('titanic')
+
+print(df.head())
+print("Dataset Loaded Successfully!")
+
+cell 2
+
+
+# Dataset information
+print("Shape:", df.shape)
+df.info()
+
+# Remove duplicates
+df = df.drop_duplicates()
+
+# Remove unnecessary columns
+df = df.drop(
+    columns=['deck', 'embark_town', 'alive'],
+    errors='ignore'
+)
+
+print("\nData Cleaning Completed!")
+
+cell 3
+
+
+# Handle Missing Values
+
+# Fill numerical missing values with median
+for col in df.select_dtypes(include='number').columns:
+    df[col] = df[col].fillna(df[col].median())
+
+# Fill categorical missing values with mode
+for col in df.select_dtypes(include=['str', 'object', 'category']).columns:
+    df[col] = df[col].fillna(df[col].mode()[0])
+
+print("Missing Values After Handling:")
+print(df.isnull().sum())
+
+print("\nMissing Values Handled Successfully!")
+
+
+cell 4
+
+
+
+# Statistical summary
+print(df.describe())
+
+# Mean, Median and Mode
+print("\nMean Age:", df['age'].mean())
+print("Median Age:", df['age'].median())
+print("Mode Age:", df['age'].mode()[0])
+
+# Survival count
+print("\nSurvival Count:")
+print(df['survived'].value_counts())
+
+cell 5
+
+
+# Histogram
+plt.figure(figsize=(7, 4))
+plt.hist(df['age'], bins=20, edgecolor='black')
+plt.title("Age Histogram")
+plt.xlabel("Age")
+plt.ylabel("Frequency")
+plt.show()
+
+# Boxplot
+plt.figure(figsize=(7, 4))
+sns.boxplot(x=df['age'])
+plt.title("Age Boxplot")
+plt.show()
+
+
+cell 6
+
+
+# Separate input and target
+X = df.drop('survived', axis=1)
+y = df['survived']
+
+# Encoding
+X = pd.get_dummies(X, drop_first=True, dtype=int)
+
+# Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.2,
+    random_state=42
+)
+
+print("Training Data:", X_train.shape)
+print("Testing Data:", X_test.shape)
+
+
+cell 7
+
+
+# Feature Scaling
+scaler = StandardScaler()
+
+X_train = pd.DataFrame(
+    scaler.fit_transform(X_train),
+    columns=X_train.columns,
+    index=X_train.index
+)
+
+X_test = pd.DataFrame(
+    scaler.transform(X_test),
+    columns=X_test.columns,
+    index=X_test.index
+)
+
+print("Feature Scaling Completed!")
+
+print("\nFinal Result:")
+print("Training Samples:", len(X_train))
+print("Testing Samples:", len(X_test))
+
+print("\nPR5 Successfully Completed!")
